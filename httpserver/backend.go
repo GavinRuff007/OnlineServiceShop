@@ -2,8 +2,10 @@ package httpserver
 
 import (
 	"RestGoTest/httpserver/controller"
+	"RestGoTest/httpserver/middleware"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	_ "modernc.org/sqlite"
@@ -15,27 +17,20 @@ type App struct {
 }
 
 func (a *App) Init() {
-
 	a.Router = mux.NewRouter()
 	a.initalizeRoutes()
 }
 
 func (a *App) initalizeRoutes() {
 
-	//Create Product
-	a.Router.HandleFunc("/createProduct", controller.CreateProductController()).Methods("POST")
+	a.Router.Handle("/createProduct", middleware.ContextAbortMiddleware(controller.CreateProductController())).Methods("POST")
+	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.AllProductsController())).Methods("GET")
+	a.Router.Handle("/product/{id}", middleware.ContextAbortMiddleware(controller.GetProductController())).Methods("GET")
+	a.Router.Handle("/update", middleware.ContextAbortMiddleware(controller.UpdateProductController())).Methods("PUT")
+	a.Router.Handle("/delete/{id}", middleware.ContextDelayAbortMiddleware(controller.DeleteProductController())).Methods("DELETE")
+	a.Router.Handle("/deleteAll", middleware.ContextDelayAbortMiddleware(controller.DeleteAllProductsController())).Methods("DELETE")
 
-	//Read Product
-	a.Router.HandleFunc("/products", controller.AllProductsController()).Methods("GET")
-	a.Router.HandleFunc("/product/{id}", controller.GetProductController()).Methods("GET")
-
-	//Update Product
-	a.Router.HandleFunc("/update", controller.UpdateProductController()).Methods("PUT")
-
-	//Delete Product
-	a.Router.HandleFunc("/delete/{id}", controller.DeleteProductController()).Methods("DELETE")
-	a.Router.HandleFunc("/deleteAll", controller.DeleteAllProductsController()).Methods("DELETE")
-
+	a.Router.Use(middleware.TimeoutMiddleware(7 * time.Second))
 }
 
 func (a *App) Run() {

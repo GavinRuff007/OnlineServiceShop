@@ -2,106 +2,43 @@ package service
 
 import (
 	"RestGoTest/httpserver/dto"
+	"RestGoTest/httpserver/model"
 	"RestGoTest/httpserver/repository"
-	"RestGoTest/httpserver/util"
-	"encoding/json"
-	"io"
-	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
+	"context"
 )
 
-func AllProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := repository.GetProducts()
-	if err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	util.ResponseWithJSON(w, products, "فراخوانی با موفقیت انجام شد")
+func AllProducts(ctx context.Context) ([]repository.Product, error) {
+	return repository.GetProducts(ctx)
 }
 
-func FetchProduct(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func FetchProduct(ctx context.Context, id int) (repository.Product, error) {
 	var p repository.Product
-	p.ID, _ = strconv.Atoi(vars["id"])
-	err := p.GetProduct()
-	if err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
-	}
-	util.ResponseWithJSON(w, p, "فراخوانی با موفقیت انجام شد")
+	p.ID = id
+	err := p.GetProduct(ctx)
+	return p, err
 }
 
-func CreateProduct(w http.ResponseWriter, r *http.Request) {
-	reqBody, _ := io.ReadAll(r.Body)
-	var p repository.Product
-	json.Unmarshal(reqBody, &p)
-	err := p.CreateProduct()
+func CreateProduct(ctx context.Context, p *repository.Product) (dto.CreateResponse, error) {
+	err := p.CreateProduct(ctx)
 	if err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+		return dto.CreateResponse{}, err
 	}
-
-	createResponse := dto.CreateResponse{
+	return dto.CreateResponse{
 		ID:          p.ID,
 		ProductCode: p.ProductCode,
 		Name:        p.Name,
-	}
-
-	util.ResponseWithJSON(w, createResponse, "اطلاعات جدید با موفقیت ذخیره شد")
-
+	}, nil
 }
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	idStr := vars["id"]
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		util.ResponseWithError(w, http.StatusBadRequest, "شناسه نامعتبر است")
-	}
-
-	p := repository.Product{}
-	p.ID = id
-	err = p.DeleteProduct()
-	if err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در حذف محصول")
-	}
-
-	util.ResponseWithJSON(w, nil, "محصول با موفقیت حذف شد")
+func DeleteProduct(ctx context.Context, id int) error {
+	p := repository.Product{Product: model.Product{ID: id}}
+	return p.DeleteProduct(ctx)
 }
 
-func DeleteAllProducts(w http.ResponseWriter, r *http.Request) {
-	err := repository.DeleteAllProducts()
-	if err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در حذف همه محصولات")
-
-	}
-	util.ResponseWithJSON(w, nil, "همه محصولات با موفقیت حذف شدند")
+func DeleteAllProducts(ctx context.Context) error {
+	return repository.DeleteAllProducts(ctx)
 }
 
-func UpdateProduct(w http.ResponseWriter, r *http.Request) {
-
-	var p repository.Product
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		util.ResponseWithError(w, http.StatusBadRequest, "خطا در خواندن بدنه درخواست")
-
-	}
-
-	if err := json.Unmarshal(body, &p); err != nil {
-		util.ResponseWithError(w, http.StatusBadRequest, "فرمت JSON نامعتبر است")
-
-	}
-
-	if p.ID == 0 {
-		util.ResponseWithError(w, http.StatusBadRequest, "شناسه (ID) الزامی است")
-
-	}
-
-	if err := p.UpdateProduct(); err != nil {
-		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در بروزرسانی محصول")
-	}
-
-	util.ResponseWithJSON(w, p, "محصول با موفقیت بروزرسانی شد")
-
+func UpdateProduct(ctx context.Context, p *repository.Product) error {
+	return p.UpdateProduct(ctx)
 }
