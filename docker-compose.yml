@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssw0rd!2023
+      MYSQL_DATABASE: onlineShop
+    ports:
+      - "3307:3306"
+    networks:
+      - shopnet
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/product.sql:/docker-entrypoint-initdb.d/init.sql
+
+  onlineshoprestapi:
+    build: .
+    container_name: onlineshoprestapi
+    depends_on:
+      - mysql
+    ports:
+      - "8090:9004"
+    networks:
+      - shopnet
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: P@ssw0rd!2023
+      DB_NAME: onlineShop
+
+networks:
+  shopnet:
+
+volumes:
+  mysql-data:
