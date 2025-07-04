@@ -7,7 +7,10 @@ import (
 	"net/http"
 	"time"
 
+	_ "RestGoTest/docs"
+
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 	_ "modernc.org/sqlite"
 )
 
@@ -23,12 +26,14 @@ func (a *App) Init() {
 
 func (a *App) initalizeRoutes() {
 
-	a.Router.Handle("/createProduct", middleware.ContextAbortMiddleware(controller.CreateProductController())).Methods("POST")
 	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.AllProductsController())).Methods("GET")
-	a.Router.Handle("/product/{id}", middleware.ContextAbortMiddleware(controller.GetProductController())).Methods("GET")
-	a.Router.Handle("/update", middleware.ContextAbortMiddleware(controller.UpdateProductController())).Methods("PUT")
-	a.Router.Handle("/delete/{id}", middleware.ContextDelayAbortMiddleware(controller.DeleteProductController())).Methods("DELETE")
-	a.Router.Handle("/deleteAll", middleware.ContextDelayAbortMiddleware(controller.DeleteAllProductsController())).Methods("DELETE")
+	a.Router.Handle("/products/{id}", middleware.ContextAbortMiddleware(controller.GetProductController())).Methods("GET")
+	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.CreateProductController())).Methods("POST")
+	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.UpdateProductController())).Methods("PUT")
+	a.Router.Handle("/products/{id}", middleware.ContextDelayAbortMiddleware(controller.DeleteProductController())).Methods("DELETE")
+	a.Router.Handle("/products", middleware.ContextDelayAbortMiddleware(controller.DeleteAllProductsController())).Methods("DELETE")
+
+	a.Router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	a.Router.Use(middleware.TimeoutMiddleware(7 * time.Second))
 }

@@ -13,8 +13,7 @@ services:
       - shopnet
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./database/product.sql:/docker-entrypoint-initdb.d/init.sql
-
+      
   onlineshoprestapi:
     build: .
     container_name: onlineshoprestapi

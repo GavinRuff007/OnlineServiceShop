@@ -1,3 +1,13 @@
+// @title           Product API
+// @version         1.0
+// @description     Online Shop REST API
+// @termsOfService  http://swagger.io/terms/
+// @contact.name    Support
+// @contact.email   example@example.com
+// @license.name    MIT
+// @host            localhost:9004
+// @BasePath        /
+
 package main
 
 import (

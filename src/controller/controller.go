@@ -13,6 +13,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// AllProductsController godoc
+// @Summary      دریافت همه محصولات
+// @Description  این API لیست کامل محصولات را برمی‌گرداند.
+// @Tags         products
+// @Produce      json
+// @Success      200  {array}  repository.Product
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products [get]
 func AllProductsController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		products, err := service.AllProducts(r.Context())
@@ -29,6 +37,16 @@ func AllProductsController() http.HandlerFunc {
 	}
 }
 
+// GetProductController godoc
+// @Summary      دریافت محصول با شناسه
+// @Description  دریافت اطلاعات یک محصول با استفاده از شناسه
+// @Tags         products
+// @Produce      json
+// @Param        id   path      int  true  "شناسه محصول"
+// @Success      200  {object}  repository.Product
+// @Failure      400  {object}  util.ErrorResponse
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products/{id} [get]
 func GetProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -50,6 +68,17 @@ func GetProductController() http.HandlerFunc {
 	}
 }
 
+// CreateProductController godoc
+// @Summary      ایجاد محصول جدید
+// @Description  ایجاد یک محصول جدید با استفاده از اطلاعات ارسال شده
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        product  body  repository.Product  true  "اطلاعات محصول جدید"
+// @Success      201  {object}  repository.Product
+// @Failure      400  {object}  util.ErrorResponse
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products [post]
 func CreateProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqBody, err := io.ReadAll(r.Body)
@@ -75,6 +104,16 @@ func CreateProductController() http.HandlerFunc {
 	}
 }
 
+// DeleteProductController godoc
+// @Summary      حذف یک محصول
+// @Description  حذف یک محصول با استفاده از شناسه
+// @Tags         products
+// @Produce      json
+// @Param        id   path      int  true  "شناسه محصول"
+// @Success      200  {object}  map[string]interface{}
+// @Failure      400  {object}  util.ErrorResponse
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products/{id} [delete]
 func DeleteProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -95,6 +134,14 @@ func DeleteProductController() http.HandlerFunc {
 	}
 }
 
+// DeleteAllProductsController godoc
+// @Summary      حذف همه محصولات
+// @Description  حذف همه محصولات موجود در دیتابیس
+// @Tags         products
+// @Produce      json
+// @Success      200  {object}  map[string]interface{}
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products [delete]
 func DeleteAllProductsController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := service.DeleteAllProducts(r.Context()); err != nil {
@@ -109,6 +156,17 @@ func DeleteAllProductsController() http.HandlerFunc {
 	}
 }
 
+// UpdateProductController godoc
+// @Summary      بروزرسانی محصول
+// @Description  بروزرسانی اطلاعات یک محصول موجود
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        product  body  repository.Product  true  "اطلاعات جدید محصول"
+// @Success      200  {object}  repository.Product
+// @Failure      400  {object}  util.ErrorResponse
+// @Failure      500  {object}  util.ErrorResponse
+// @Router       /products [put]
 func UpdateProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var p repository.Product

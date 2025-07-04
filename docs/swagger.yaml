@@ -1,0 +1,185 @@
+basePath: /
+definitions:
+  repository.Product:
+    properties:
+      id:
+        type: integer
+      inventory:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      productCode:
+        type: string
+      status:
+        type: string
+    type: object
+  util.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+host: localhost:9004
+info:
+  contact:
+    email: example@example.com
+    name: Support
+  description: Online Shop REST API
+  license:
+    name: MIT
+  termsOfService: http://swagger.io/terms/
+  title: Product API
+  version: "1.0"
+paths:
+  /products:
+    delete:
+      description: حذف همه محصولات موجود در دیتابیس
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: حذف همه محصولات
+      tags:
+      - products
+    get:
+      description: این API لیست کامل محصولات را برمی‌گرداند.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repository.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: دریافت همه محصولات
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: ایجاد یک محصول جدید با استفاده از اطلاعات ارسال شده
+      parameters:
+      - description: اطلاعات محصول جدید
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/repository.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repository.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: ایجاد محصول جدید
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: بروزرسانی اطلاعات یک محصول موجود
+      parameters:
+      - description: اطلاعات جدید محصول
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/repository.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repository.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: بروزرسانی محصول
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      description: حذف یک محصول با استفاده از شناسه
+      parameters:
+      - description: شناسه محصول
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: حذف یک محصول
+      tags:
+      - products
+    get:
+      description: دریافت اطلاعات یک محصول با استفاده از شناسه
+      parameters:
+      - description: شناسه محصول
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repository.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ErrorResponse'
+      summary: دریافت محصول با شناسه
+      tags:
+      - products
+swagger: "2.0"
