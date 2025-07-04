@@ -13,8 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Archive project files (exclude the archive itself)
-        run: tar --exclude=project.tar.gz -czf project.tar.gz .
+      - name: Archive project files
+        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs  
+
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
