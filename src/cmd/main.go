@@ -1,9 +1,9 @@
 package main
 
 import (
-	"RestGoTest/httpserver"
-	"RestGoTest/httpserver/database"
-	"RestGoTest/httpserver/repository"
+	httpserver "RestGoTest/src"
+	"RestGoTest/src/database"
+	"RestGoTest/src/repository"
 	"fmt"
 	"time"
 )

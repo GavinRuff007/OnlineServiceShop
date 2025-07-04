@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"RestGoTest/httpserver/database"
-	"RestGoTest/httpserver/model"
+	"RestGoTest/src/database"
+	"RestGoTest/src/model"
 	"context"
 	"database/sql"
 )

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"RestGoTest/httpserver/util"
+	"RestGoTest/src/util"
 	"context"
 	"fmt"
 	"net/http"

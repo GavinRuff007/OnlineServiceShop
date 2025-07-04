@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"RestGoTest/httpserver/repository"
-	"RestGoTest/httpserver/service"
-	"RestGoTest/httpserver/util"
+	"RestGoTest/src/repository"
+	"RestGoTest/src/service"
+	"RestGoTest/src/util"
 	"context"
 	"encoding/json"
 	"io"
