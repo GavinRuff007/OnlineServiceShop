@@ -1,0 +1,43 @@
+name: Build and Deploy with Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Archive project files
+        run: tar czf project.tar.gz .
+
+      - name: Copy project to VPS via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 127.0.0.1
+          port: 2222
+          username: parsa
+          password: parsa
+          source: "project.tar.gz"
+          target: "/home/parsa"
+
+      - name: Deploy and Run Docker Compose on VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 127.0.0.1
+          port: 2222
+          username: parsa
+          password: parsa
+          script: |
+            cd /home/parsa
+            rm -rf CleanRestApi
+            mkdir CleanRestApi
+            tar xzf project.tar.gz -C CleanRestApi
+            cd CleanRestApi
+            docker compose down || true
+            docker compose up -d --build
