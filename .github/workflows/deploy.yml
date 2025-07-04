@@ -16,9 +16,9 @@ jobs:
       - name: Copy helloworld.txt to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: 127.0.0.1
-          port: 2222
+          host: 202.133.88.175
+          port: 2026
           username: parsa
-          password: parsa
+          password: 123
           source: "helloworld.txt"
           target: "/home/parsa/"
