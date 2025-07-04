@@ -2,44 +2,43 @@ package controller
 
 import (
 	"RestGoTest/httpserver/service"
-	"database/sql"
 	"net/http"
 
 	_ "modernc.org/sqlite"
 )
 
-func AllProductsController(db *sql.DB) http.HandlerFunc {
+func AllProductsController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.AllProducts(w, r, db)
+		service.AllProducts(w, r)
 	}
 }
 
-func GetProductController(db *sql.DB) http.HandlerFunc {
+func GetProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.FetchProduct(w, r, db)
+		service.FetchProduct(w, r)
 	}
 }
 
-func CreateProductController(db *sql.DB) http.HandlerFunc {
+func CreateProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.CreateProduct(w, r, db)
+		service.CreateProduct(w, r)
 	}
 }
 
-func DeleteProductController(db *sql.DB) http.HandlerFunc {
+func DeleteProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.DeleteProduct(w, r, db)
+		service.DeleteProduct(w, r)
 	}
 }
 
-func DeleteAllProductsController(db *sql.DB) http.HandlerFunc {
+func DeleteAllProductsController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.DeleteAllProducts(w, r, db)
+		service.DeleteAllProducts(w, r)
 	}
 }
 
-func UpdateProductController(db *sql.DB) http.HandlerFunc {
+func UpdateProductController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		service.UpdateProduct(w, r, db)
+		service.UpdateProduct(w, r)
 	}
 }

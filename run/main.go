@@ -2,6 +2,8 @@ package main
 
 import (
 	"RestGoTest/httpserver"
+	"RestGoTest/httpserver/database"
+	"RestGoTest/httpserver/repository"
 	"fmt"
 	"time"
 )
@@ -16,6 +18,9 @@ func printBanner() {
 func main() {
 
 	printBanner()
+
+	database.InitDatabase()
+	defer repository.DB.Close()
 
 	a := &httpserver.App{Port: ":9004"}
 	a.Init()

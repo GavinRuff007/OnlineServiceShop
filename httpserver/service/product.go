@@ -4,7 +4,6 @@ import (
 	"RestGoTest/httpserver/dto"
 	"RestGoTest/httpserver/repository"
 	"RestGoTest/httpserver/util"
-	"database/sql"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -13,8 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AllProducts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	products, err := repository.GetProducts(db)
+func AllProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := repository.GetProducts()
 	if err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -22,22 +21,22 @@ func AllProducts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	util.ResponseWithJSON(w, products, "فراخوانی با موفقیت انجام شد")
 }
 
-func FetchProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func FetchProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var p repository.Product
 	p.ID, _ = strconv.Atoi(vars["id"])
-	err := p.GetProduct(db)
+	err := p.GetProduct()
 	if err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
 	}
 	util.ResponseWithJSON(w, p, "فراخوانی با موفقیت انجام شد")
 }
 
-func CreateProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := io.ReadAll(r.Body)
 	var p repository.Product
 	json.Unmarshal(reqBody, &p)
-	err := p.CreateProduct(db)
+	err := p.CreateProduct()
 	if err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, err.Error())
 	}
@@ -52,7 +51,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 }
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 	id, err := strconv.Atoi(idStr)
@@ -62,7 +61,7 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	p := repository.Product{}
 	p.ID = id
-	err = p.DeleteProduct(db)
+	err = p.DeleteProduct()
 	if err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در حذف محصول")
 	}
@@ -70,8 +69,8 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	util.ResponseWithJSON(w, nil, "محصول با موفقیت حذف شد")
 }
 
-func DeleteAllProducts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	err := repository.DeleteAllProducts(db)
+func DeleteAllProducts(w http.ResponseWriter, r *http.Request) {
+	err := repository.DeleteAllProducts()
 	if err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در حذف همه محصولات")
 
@@ -79,7 +78,7 @@ func DeleteAllProducts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	util.ResponseWithJSON(w, nil, "همه محصولات با موفقیت حذف شدند")
 }
 
-func UpdateProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	var p repository.Product
 
@@ -99,7 +98,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	}
 
-	if err := p.UpdateProduct(db); err != nil {
+	if err := p.UpdateProduct(); err != nil {
 		util.ResponseWithError(w, http.StatusInternalServerError, "خطا در بروزرسانی محصول")
 	}
 
