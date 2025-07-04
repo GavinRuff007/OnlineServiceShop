@@ -15,7 +15,7 @@ jobs:
 
       - name: Archive project files
         run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs  
-
+        
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
