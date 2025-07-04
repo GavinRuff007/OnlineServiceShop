@@ -1,8 +1,8 @@
 package httpserver
 
 import (
-	"RestGoTest/httpserver/controller"
-	"RestGoTest/httpserver/middleware"
+	"RestGoTest/src/controller"
+	"RestGoTest/src/middleware"
 	"log"
 	"net/http"
 	"time"
