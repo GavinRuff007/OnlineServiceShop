@@ -29,6 +29,12 @@ services:
       DB_USER: root
       DB_PASSWORD: P@ssw0rd!2023
       DB_NAME: onlineShop
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   shopnet:

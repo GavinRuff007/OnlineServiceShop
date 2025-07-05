@@ -1,3 +1,5 @@
+CREATE DATABASE onlineShop;
+use onlineShop;
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     productCode VARCHAR(100) NOT NULL,
