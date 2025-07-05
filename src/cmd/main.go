@@ -5,7 +5,7 @@
 // @contact.name    Support
 // @contact.email   example@example.com
 // @license.name    MIT
-// @host            202.133.88.175:9004
+// @host            202.133.88.175:8090
 // @BasePath        /
 
 package main
