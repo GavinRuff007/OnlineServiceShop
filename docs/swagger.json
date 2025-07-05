@@ -13,7 +13,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:9004",
+    "host": "202.133.88.175:9004",
     "basePath": "/",
     "paths": {
         "/products": {

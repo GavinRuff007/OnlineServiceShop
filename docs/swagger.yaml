@@ -22,7 +22,7 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:9004
+host: 202.133.88.175:9004
 info:
   contact:
     email: example@example.com
