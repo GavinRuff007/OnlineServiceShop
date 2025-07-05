@@ -138,9 +138,9 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 func getConfigPath(env string) string {
 	switch env {
 	case "docker":
-		return "../config/config-docker"
+		return "config/config-docker"
 	case "production":
-		return "../config/config-production"
+		return "config/config-production"
 	case "development":
 		return "../../config/config-development"
 	default:
