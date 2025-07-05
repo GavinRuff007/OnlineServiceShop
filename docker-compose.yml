@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0.34
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: P@ssw0rd!2023
@@ -13,7 +13,7 @@ services:
       - shopnet
     volumes:
       - mysql-data:/var/lib/mysql
-      
+
   onlineshoprestapi:
     build: .
     container_name: onlineshoprestapi
