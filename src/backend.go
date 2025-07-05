@@ -11,7 +11,6 @@ import (
 
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
-	_ "modernc.org/sqlite"
 )
 
 type App struct {
