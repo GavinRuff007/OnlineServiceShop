@@ -15,25 +15,24 @@ jobs:
 
       - name: Archive project files
         run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs  
-        
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: 202.133.88.175
-          port: 2026
-          username: parsa
-          password: 123
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
           source: "project.tar.gz"
           target: "/home/parsa"
 
       - name: Deploy and Run Docker Compose on VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: 202.133.88.175
-          port: 2026
-          username: parsa
-          password: 123
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd /home/parsa
             rm -rf CleanRestApi || true
