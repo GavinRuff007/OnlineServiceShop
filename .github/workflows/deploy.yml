@@ -13,8 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Generate .env file
+        run: |
+          echo "APP_ENV=production" > .env
+          echo "PORT=${{ secrets.API_PORT }}" >> .env
+
       - name: Archive project files
-        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs  
+        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs .env
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
@@ -39,5 +44,6 @@ jobs:
             mkdir -p CleanRestApi
             tar xzf project.tar.gz -C CleanRestApi
             cd CleanRestApi
+            mkdir -p config
             docker compose down || true
             docker compose up -d --build
