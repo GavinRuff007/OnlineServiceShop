@@ -1,5 +1,3 @@
 # Ignore root database folder
 /database/
 
-# Ignore database in src
-/src/database/
