@@ -25,6 +25,8 @@ func (a *App) Init() {
 
 func (a *App) initalizeRoutes() {
 
+	a.Router.Use(middleware.EnableCORS)
+
 	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.AllProductsController())).Methods("GET")
 	a.Router.Handle("/products/{id}", middleware.ContextAbortMiddleware(controller.GetProductController())).Methods("GET")
 	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.CreateProductController())).Methods("POST")
