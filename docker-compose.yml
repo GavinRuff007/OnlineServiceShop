@@ -32,7 +32,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:9004/health"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 7
 
 networks:
   shopnet:
