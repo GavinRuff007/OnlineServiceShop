@@ -21,24 +21,25 @@ import (
 
 func main() {
 
+	cfg := config.GetConfig()
+
 	fmt.Println("═══════════════════════════════════════════════")
 	fmt.Println("🧩      API Server      ")
 	fmt.Println("🚀   OnlineShop REST API   ")
 	fmt.Println("═══════════════════════════════════════════════")
 
-	cfg := config.GetConfig()
-	database.InitDatabase()
-	defer repository.DB.Close()
+	InternalPort := fmt.Sprintf(":%s", cfg.Server.InternalPort)
 
-	/*Start Point of Service*/
-	/*═══════════════════════════════════════════════*/
-	a := &httpserver.App{Port: fmt.Sprintf(":%s", cfg.Server.InternalPort)}
-	a.Init()
-
-	fmt.Printf("✅ Server successfully started on port %s\n", a.Port)
+	fmt.Printf("✅ Server successfully started on port %s\n", InternalPort)
 	fmt.Println("🟢 Running... Press Ctrl+C to stop")
 	fmt.Printf("📅 Startup time: %s\n\n", time.Now().Format("2006-01-02 15:04:05"))
 
+	/*Start Point of Service*/
+	/*═══════════════════════════════════════════════*/
+	database.InitDatabase()
+	defer repository.DB.Close()
+	a := &httpserver.App{Port: InternalPort}
+	a.Init()
 	a.Run()
 	/*═══════════════════════════════════════════════*/
 

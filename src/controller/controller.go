@@ -10,8 +10,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
+
+var validate = validator.New()
 
 // AllProductsController godoc
 // @Summary      دریافت همه محصولات
@@ -25,7 +28,6 @@ func AllProductsController() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		products, err := service.AllProducts(r.Context())
 		if err != nil {
-
 			if r.Context().Err() == context.DeadlineExceeded {
 				util.ResponseWithError(w, http.StatusRequestTimeout, "درخواست شما Timeout شد")
 				return
@@ -91,6 +93,12 @@ func CreateProductController() http.HandlerFunc {
 			util.ResponseWithError(w, http.StatusBadRequest, "فرمت JSON نامعتبر است")
 			return
 		}
+
+		if err := validate.Struct(p); err != nil {
+			util.ResponseWithError(w, http.StatusBadRequest, "اعتبارسنجی ورودی نامعتبر است: "+err.Error())
+			return
+		}
+
 		createResponse, err := service.CreateProduct(r.Context(), &p)
 		if err != nil {
 			if r.Context().Err() == context.DeadlineExceeded {

@@ -14,6 +14,8 @@ definitions:
         type: string
       status:
         type: string
+    required:
+    - id
     type: object
   util.ErrorResponse:
     properties:
@@ -34,6 +36,21 @@ info:
   title: Product API
   version: "1.0"
 paths:
+  /api/v1/test:
+    get:
+      description: این یک سرویس تست است
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: تست سرویس
+      tags:
+      - Test
   /products:
     delete:
       description: حذف همه محصولات موجود در دیتابیس

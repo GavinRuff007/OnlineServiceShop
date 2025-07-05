@@ -102,7 +102,6 @@ func GetConfig() *Config {
 		cfg.Server.ExternalPort = envPort
 	} else {
 		cfg.Server.ExternalPort = cfg.Server.InternalPort
-		log.Printf("Environment variable PORT not set; you are using internal port value -> %s", cfg.Server.ExternalPort)
 	}
 
 	return cfg

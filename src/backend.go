@@ -9,9 +9,20 @@ import (
 
 	_ "RestGoTest/docs"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+// @Summary      تست سرویس
+// @Description  این یک سرویس تست است
+// @Tags         Test
+// @Produce      json
+// @Success      200  {object}  map[string]string
+// @Router       /api/v1/test [get]
+func TestHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"msg": "Working!"})
+}
 
 type App struct {
 	Port   string
@@ -20,10 +31,12 @@ type App struct {
 
 func (a *App) Init() {
 	a.Router = mux.NewRouter()
-	a.initalizeRoutes()
+
+	a.InitializeGinService()
+	a.InitializeHttpService()
 }
 
-func (a *App) initalizeRoutes() {
+func (a *App) InitializeHttpService() {
 
 	a.Router.Use(middleware.EnableCORS)
 
@@ -39,6 +52,18 @@ func (a *App) initalizeRoutes() {
 	a.Router.Use(middleware.TimeoutMiddleware(7 * time.Second))
 }
 
+func (a *App) InitializeGinService() {
+	r := gin.New()
+	r.Use(gin.Logger(), gin.Recovery())
+	v1 := r.Group("/api/v1/")
+	{
+		v1.GET("/test", TestHandler)
+	}
+	r.GET("/swagger/*any", gin.WrapH(httpSwagger.WrapHandler))
+	a.Router.PathPrefix("/api/v1/").Handler(r)
+}
+
 func (a *App) Run() {
+
 	log.Fatal(http.ListenAndServe(a.Port, a.Router))
 }
