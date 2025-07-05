@@ -1,9 +1,5 @@
-# Ignore root database folder
-/database/
-
 /.vscode
-
 
 /src/cmd/*.exe
 
-/src/database/database.go
+/config/

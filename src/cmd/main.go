@@ -12,6 +12,7 @@ package main
 
 import (
 	httpserver "RestGoTest/src"
+	"RestGoTest/src/config"
 	"RestGoTest/src/database"
 	"RestGoTest/src/repository"
 	"fmt"
@@ -25,12 +26,13 @@ func main() {
 	fmt.Println("🚀   OnlineShop REST API   ")
 	fmt.Println("═══════════════════════════════════════════════")
 
+	cfg := config.GetConfig()
 	database.InitDatabase()
 	defer repository.DB.Close()
 
 	/*Start Point of Service*/
 	/*═══════════════════════════════════════════════*/
-	a := &httpserver.App{Port: ":9004"}
+	a := &httpserver.App{Port: fmt.Sprintf(":%s", cfg.Server.InternalPort)}
 	a.Init()
 
 	fmt.Printf("✅ Server successfully started on port %s\n", a.Port)

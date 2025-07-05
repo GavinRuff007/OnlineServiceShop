@@ -17,18 +17,16 @@ services:
   onlineshoprestapi:
     build: .
     container_name: onlineshoprestapi
+    volumes:
+      - /home/parsa/onlineShopApi/config/:/app/config/
     depends_on:
       - mysql
     ports:
       - "8090:9004"
     networks:
       - shopnet
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: P@ssw0rd!2023
-      DB_NAME: onlineShop
+    env_file:
+      - .env
     restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9004/health"]
