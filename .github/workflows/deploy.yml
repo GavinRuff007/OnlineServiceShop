@@ -58,6 +58,5 @@ jobs:
             sh -c "truncate -s 0 /var/lib/docker/containers/*/*-json.log" || true
             # پاکسازی فایل‌ها (اختیاری)
             cd /home/parsa
-            docker system prune -a -f || true
             rm -f project.tar.gz
 
