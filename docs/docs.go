@@ -22,7 +22,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/test": {
+        "/api/v1/health/health": {
             "get": {
                 "description": "این یک سرویس تست است",
                 "produces": [

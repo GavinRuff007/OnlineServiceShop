@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"RestGoTest/src/repository"
-	"RestGoTest/src/service"
+	"RestGoTest/src/httpPackage/repository"
+	"RestGoTest/src/httpPackage/service"
 	"RestGoTest/src/util"
 	"context"
 	"encoding/json"

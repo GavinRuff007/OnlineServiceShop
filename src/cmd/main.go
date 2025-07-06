@@ -14,7 +14,7 @@ import (
 	httpserver "RestGoTest/src"
 	"RestGoTest/src/config"
 	"RestGoTest/src/database"
-	"RestGoTest/src/repository"
+	"RestGoTest/src/httpPackage/repository"
 	"fmt"
 	"time"
 )

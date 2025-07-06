@@ -1,7 +1,8 @@
 package httpserver
 
 import (
-	"RestGoTest/src/controller"
+	"RestGoTest/src/GinPackage/router"
+	"RestGoTest/src/httpPackage/controller"
 	"RestGoTest/src/middleware"
 	"log"
 	"net/http"
@@ -13,16 +14,6 @@ import (
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
-
-// @Summary      تست سرویس
-// @Description  این یک سرویس تست است
-// @Tags         Test
-// @Produce      json
-// @Success      200  {object}  map[string]string
-// @Router       /api/v1/test [get]
-func TestHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"msg": "Working!"})
-}
 
 type App struct {
 	Port   string
@@ -57,7 +48,8 @@ func (a *App) InitializeGinService() {
 	r.Use(gin.Logger(), gin.Recovery())
 	v1 := r.Group("/api/v1/")
 	{
-		v1.GET("/test", TestHandler)
+		health := v1.Group("/health")
+		router.Health(health)
 	}
 	r.GET("/swagger/*any", gin.WrapH(httpSwagger.WrapHandler))
 	a.Router.PathPrefix("/api/v1/").Handler(r)

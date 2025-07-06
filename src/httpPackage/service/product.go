@@ -1,9 +1,9 @@
 package service
 
 import (
-	"RestGoTest/src/dto"
+	"RestGoTest/src/httpPackage/dto"
+	"RestGoTest/src/httpPackage/repository"
 	"RestGoTest/src/model"
-	"RestGoTest/src/repository"
 	"context"
 )
 

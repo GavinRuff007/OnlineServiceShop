@@ -16,7 +16,7 @@
     "host": "202.133.88.175:8090",
     "basePath": "/",
     "paths": {
-        "/api/v1/test": {
+        "/api/v1/health/health": {
             "get": {
                 "description": "این یک سرویس تست است",
                 "produces": [
