@@ -15,7 +15,7 @@ jobs:
 
       - name: Generate .env files (root & docker/.env)
         run: |
-          # ساخت .env روت پروژه
+          # ساخت .env در root پروژه
           echo "APP_ENV=production" > .env
           echo "PORT=${{ secrets.API_PORT }}" >> .env
 
@@ -27,7 +27,7 @@ jobs:
           echo "FILEBEAT_INTERNAL_PASSWORD=${{ secrets.FILEBEAT_INTERNAL_PASSWORD }}" >> docker/.env
 
       - name: Archive project files
-        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs .env docker/.env
+        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs .env docker
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
@@ -54,9 +54,8 @@ jobs:
             cd CleanRestApi
             docker compose down || true
             docker compose up -d --build
-            # لاگ‌های داکر را پاک کن (اختیاری)
+            # پاک کردن لاگ‌های داکر (اختیاری)
             sh -c "truncate -s 0 /var/lib/docker/containers/*/*-json.log" || true
             # پاکسازی فایل‌ها (اختیاری)
             cd /home/parsa
             rm -f project.tar.gz
-
