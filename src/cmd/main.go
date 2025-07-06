@@ -12,9 +12,11 @@ package main
 
 import (
 	httpserver "RestGoTest/src"
+	"RestGoTest/src/cache"
 	"RestGoTest/src/config"
 	"RestGoTest/src/database"
 	"RestGoTest/src/httpPackage/repository"
+	"RestGoTest/src/pkg/logging"
 	"fmt"
 	"time"
 )
@@ -22,6 +24,7 @@ import (
 func main() {
 
 	cfg := config.GetConfig()
+	logger := logging.NewLogger(cfg)
 
 	fmt.Println("═══════════════════════════════════════════════")
 	fmt.Println("🧩      API Server      ")
@@ -38,6 +41,13 @@ func main() {
 	/*═══════════════════════════════════════════════*/
 	database.InitDatabase()
 	defer repository.DB.Close()
+
+	err := cache.InitRedis(cfg)
+	defer cache.CloseRedis()
+	if err != nil {
+		logger.Fatal(logging.Redis, logging.Startup, err.Error(), nil)
+	}
+
 	a := &httpserver.App{Port: InternalPort}
 	a.Init()
 	a.Run()

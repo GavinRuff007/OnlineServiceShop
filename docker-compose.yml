@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # سرویس‌های قبلی
   mysql:
     image: mysql:8.0.34
     container_name: mysql
@@ -34,8 +35,106 @@ services:
       timeout: 5s
       retries: 7
 
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    command: [ "redis-server", "/etc/redis/redis.conf" ]
+    volumes:
+      - .docker/redis/redis.conf:/etc/redis/redis.conf
+      - .docker/redis:/etc/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - shopnet
+
+  # سرویس‌های ELK (اضافه‌شده)
+  elasticsearch:
+    build:
+      context: docker/elk/elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: elasticsearch
+    volumes:
+      - ./docker/elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch-data:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    networks:
+      - shopnet
+    restart: unless-stopped
+
+  kibana:
+    build:
+      context: docker/elk/kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./docker/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+      - elasticsearch-data:/usr/share/kibana/data:Z
+    ports:
+      - 5601:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - shopnet
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+  filebeat:
+    build:
+      context: docker/elk/filebeat/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+    volumes:
+      - ./docker/elk/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./src/logs:/var/log/filebeat/service:ro
+      - filebeat-logs:/var/log/filebeat
+      - filebeat-logs:/app:ro
+    environment:
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+    networks:
+      - shopnet
+    depends_on:
+      - elasticsearch
+
+  setup:
+    build:
+      context: docker/elk/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./docker/elk/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./docker/elk/setup/helpers.sh:/helpers.sh:ro,Z
+      - ./docker/elk/setup/roles:/roles:ro,Z
+      - setup-state:/state:Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+    networks:
+      - shopnet
+    depends_on:
+      - elasticsearch
+
 networks:
   shopnet:
 
 volumes:
   mysql-data:
+  redis:
+  elasticsearch-data:
+  filebeat-logs:
+  setup-state:

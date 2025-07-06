@@ -13,13 +13,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate .env file
+      - name: Generate .env files (root & docker/.env)
         run: |
+          # ساخت .env روت پروژه
           echo "APP_ENV=production" > .env
           echo "PORT=${{ secrets.API_PORT }}" >> .env
 
+          # ساخت docker/.env با مقادیر مخفی از Secrets
+          mkdir -p docker
+          echo "ELASTIC_VERSION=${{ secrets.ELASTIC_VERSION }}" > docker/.env
+          echo "ELASTIC_PASSWORD=${{ secrets.ELASTIC_PASSWORD }}" >> docker/.env
+          echo "KIBANA_SYSTEM_PASSWORD=${{ secrets.KIBANA_SYSTEM_PASSWORD }}" >> docker/.env
+          echo "FILEBEAT_INTERNAL_PASSWORD=${{ secrets.FILEBEAT_INTERNAL_PASSWORD }}" >> docker/.env
+
       - name: Archive project files
-        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs .env
+        run: tar czf project.tar.gz src go.mod go.sum Dockerfile docker-compose.yml docs .env docker/.env
 
       - name: Copy project to VPS via SSH
         uses: appleboy/scp-action@v0.1.7
@@ -44,12 +52,12 @@ jobs:
             mkdir -p CleanRestApi
             tar xzf project.tar.gz -C CleanRestApi
             cd CleanRestApi
-            mkdir -p config
             docker compose down || true
             docker compose up -d --build
-
-            sh -c "truncate -s 0 /var/lib/docker/containers/*/*-json.log"
+            # لاگ‌های داکر را پاک کن (اختیاری)
+            sh -c "truncate -s 0 /var/lib/docker/containers/*/*-json.log" || true
+            # پاکسازی فایل‌ها (اختیاری)
             cd /home/parsa
-            docker system prune -a
-            rm -rf CleanRestApi
+            docker system prune -a -f || true
             rm -f project.tar.gz
+
