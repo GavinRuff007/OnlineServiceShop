@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"RestGoTest/src/GinPackage/router"
+	"RestGoTest/src/config"
 	"RestGoTest/src/httpPackage/controller"
 	"RestGoTest/src/middleware"
 
@@ -21,14 +22,16 @@ type App struct {
 	Router *mux.Router
 }
 
-func (a *App) Init() {
+func (a *App) Init(cfg *config.Config) {
 	a.Router = mux.NewRouter()
 
-	a.InitializeGinService()
-	a.InitializeHttpService()
+	a.InitializeGinService(cfg)
+	a.InitializeHttpService(cfg)
 }
 
-func (a *App) InitializeHttpService() {
+func (a *App) InitializeHttpService(cfg *config.Config) {
+
+	a.Router.Use(middleware.DefaultStructuredLoggerForHttp(cfg))
 
 	a.Router.Use(middleware.EnableCORS)
 
@@ -44,8 +47,9 @@ func (a *App) InitializeHttpService() {
 	a.Router.Use(middleware.TimeoutMiddleware(7 * time.Second))
 }
 
-func (a *App) InitializeGinService() {
+func (a *App) InitializeGinService(cfg *config.Config) {
 	r := gin.New()
+	r.Use(middleware.DefaultStructuredLogger(cfg))
 	r.Use(gin.Logger(), gin.Recovery())
 	v1 := r.Group("/api/v1/")
 	{

@@ -5,7 +5,7 @@
 // @contact.name    Support
 // @contact.email   example@example.com
 // @license.name    MIT
-// @host            202.133.88.175:8090
+// @host            localhost:8090
 // @BasePath        /
 
 package main
@@ -44,12 +44,13 @@ func main() {
 
 	err := cache.InitRedis(cfg)
 	defer cache.CloseRedis()
+
 	if err != nil {
 		logger.Fatal(logging.Redis, logging.Startup, err.Error(), nil)
 	}
 
 	a := &httpserver.App{Port: InternalPort}
-	a.Init()
+	a.Init(cfg)
 	a.Run()
 	/*═══════════════════════════════════════════════*/
 

@@ -7,3 +7,5 @@
 .env
 
 /src/logs/
+
+/logs/*.log

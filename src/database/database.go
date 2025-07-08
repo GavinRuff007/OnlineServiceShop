@@ -19,6 +19,7 @@ func InitDatabase() *sql.DB {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPass, dbHost, dbPort, dbName)
 
 	DB, err := sql.Open("mysql", dsn)
+
 	if err != nil {
 		panic(err)
 	}
