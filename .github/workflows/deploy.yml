@@ -19,7 +19,10 @@ jobs:
           echo "APP_ENV=production" > .env
           echo "PORT=${{ secrets.API_PORT }}" >> .env
 
-          
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+
           echo "ELASTIC_VERSION=${{ secrets.ELASTIC_VERSION }}" > .env
           echo "ELASTIC_PASSWORD=${{ secrets.ELASTIC_PASSWORD }}" >> .env
           echo "KIBANA_SYSTEM_PASSWORD=${{ secrets.KIBANA_SYSTEM_PASSWORD }}" >> .env
