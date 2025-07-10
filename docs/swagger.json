@@ -1,41 +1,126 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Online Shop REST API",
-        "title": "Product API",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "Support",
-            "email": "example@example.com"
-        },
-        "license": {
-            "name": "MIT"
-        },
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "localhost:8090",
-    "basePath": "/",
     "paths": {
-        "/api/v1/health/health": {
-            "get": {
-                "description": "این یک سرویس تست است",
+        "/v1/users/send-otp": {
+            "post": {
+                "description": "Send otp to user",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "Users"
                 ],
-                "summary": "تست سرویس",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                "summary": "Send otp to user",
+                "parameters": [
+                    {
+                        "description": "GetOtpRequest",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.GetOtpRequest"
                         }
                     }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/helper.BaseHttpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed",
+                        "schema": {
+                            "$ref": "#/definitions/helper.BaseHttpResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Failed",
+                        "schema": {
+                            "$ref": "#/definitions/helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.GetOtpRequest": {
+            "type": "object",
+            "required": [
+                "mobileNumber"
+            ],
+            "properties": {
+                "mobileNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.BaseHttpResponse": {
+            "type": "object",
+            "properties": {
+                "error": {},
+                "result": {},
+                "resultCode": {
+                    "$ref": "#/definitions/helper.ResultCode"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "validationErrors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/validations.ValidationError"
+                    }
+                }
+            }
+        },
+        "helper.ResultCode": {
+            "type": "integer",
+            "enum": [
+                0,
+                40001,
+                40101,
+                40301,
+                40401,
+                42901,
+                42902,
+                50001,
+                50002
+            ],
+            "x-enum-varnames": [
+                "Success",
+                "ValidationError",
+                "AuthError",
+                "ForbiddenError",
+                "NotFoundError",
+                "LimiterError",
+                "OtpLimiterError",
+                "CustomRecovery",
+                "InternalError"
+            ]
+        },
+        "validations.ValidationError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "property": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         }

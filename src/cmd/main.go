@@ -1,13 +1,3 @@
-// @title           Product API
-// @version         1.0
-// @description     Online Shop REST API
-// @termsOfService  http://swagger.io/terms/
-// @contact.name    Support
-// @contact.email   example@example.com
-// @license.name    MIT
-// @host            localhost:8090
-// @BasePath        /
-
 package main
 
 import (
@@ -53,9 +43,7 @@ func main() {
 	}
 	defer db.CloseDb()
 
-	a := &httpserver.App{Port: InternalPort}
-	a.Init(cfg)
-	a.Run()
+	httpserver.InitServer(cfg)
 	/*═══════════════════════════════════════════════*/
 
 }

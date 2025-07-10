@@ -1,29 +1,88 @@
-basePath: /
-host: localhost:8090
+definitions:
+  dto.GetOtpRequest:
+    properties:
+      mobileNumber:
+        type: string
+    required:
+    - mobileNumber
+    type: object
+  helper.BaseHttpResponse:
+    properties:
+      error: {}
+      result: {}
+      resultCode:
+        $ref: '#/definitions/helper.ResultCode'
+      success:
+        type: boolean
+      validationErrors:
+        items:
+          $ref: '#/definitions/validations.ValidationError'
+        type: array
+    type: object
+  helper.ResultCode:
+    enum:
+    - 0
+    - 40001
+    - 40101
+    - 40301
+    - 40401
+    - 42901
+    - 42902
+    - 50001
+    - 50002
+    type: integer
+    x-enum-varnames:
+    - Success
+    - ValidationError
+    - AuthError
+    - ForbiddenError
+    - NotFoundError
+    - LimiterError
+    - OtpLimiterError
+    - CustomRecovery
+    - InternalError
+  validations.ValidationError:
+    properties:
+      message:
+        type: string
+      property:
+        type: string
+      tag:
+        type: string
+      value:
+        type: string
+    type: object
 info:
-  contact:
-    email: example@example.com
-    name: Support
-  description: Online Shop REST API
-  license:
-    name: MIT
-  termsOfService: http://swagger.io/terms/
-  title: Product API
-  version: "1.0"
+  contact: {}
 paths:
-  /api/v1/health/health:
-    get:
-      description: این یک سرویس تست است
+  /v1/users/send-otp:
+    post:
+      consumes:
+      - application/json
+      description: Send otp to user
+      parameters:
+      - description: GetOtpRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetOtpRequest'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Success
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: تست سرویس
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "409":
+          description: Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      summary: Send otp to user
       tags:
-      - Test
+      - Users
 swagger: "2.0"
