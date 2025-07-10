@@ -1,14 +1,13 @@
 package httpserver
 
 import (
-	"RestGoTest/src/GinPackage/router"
 	"RestGoTest/src/config"
-	"RestGoTest/src/httpPackage/controller"
+	"RestGoTest/src/router"
+
 	"RestGoTest/src/middleware"
 
 	"log"
 	"net/http"
-	"time"
 
 	_ "RestGoTest/docs"
 
@@ -26,30 +25,12 @@ func (a *App) Init(cfg *config.Config) {
 	a.Router = mux.NewRouter()
 
 	a.InitializeGinService(cfg)
-	a.InitializeHttpService(cfg)
-}
-
-func (a *App) InitializeHttpService(cfg *config.Config) {
-
-	a.Router.Use(middleware.DefaultStructuredLoggerForHttp(cfg))
-
-	a.Router.Use(middleware.EnableCORS)
-
-	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.AllProductsController())).Methods("GET")
-	a.Router.Handle("/products/{id}", middleware.ContextAbortMiddleware(controller.GetProductController())).Methods("GET")
-	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.CreateProductController())).Methods("POST")
-	a.Router.Handle("/products", middleware.ContextAbortMiddleware(controller.UpdateProductController())).Methods("PUT")
-	a.Router.Handle("/products/{id}", middleware.ContextDelayAbortMiddleware(controller.DeleteProductController())).Methods("DELETE")
-	a.Router.Handle("/products", middleware.ContextDelayAbortMiddleware(controller.DeleteAllProductsController())).Methods("DELETE")
-
-	a.Router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
-
-	a.Router.Use(middleware.TimeoutMiddleware(7 * time.Second))
 }
 
 func (a *App) InitializeGinService(cfg *config.Config) {
 	r := gin.New()
 	r.Use(middleware.DefaultStructuredLogger(cfg))
+	r.Use(middleware.LimitByRequest())
 	r.Use(gin.Logger(), gin.Recovery())
 	v1 := r.Group("/api/v1/")
 	{

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"RestGoTest/src/config"
 	"RestGoTest/src/helper"
 	"net/http"
 
@@ -9,7 +10,8 @@ import (
 )
 
 func LimitByRequest() gin.HandlerFunc {
-	lmt := tollbooth.NewLimiter(1, nil)
+	config := config.GetConfig()
+	lmt := tollbooth.NewLimiter(config.Server.RateLimitCount, nil)
 	return func(c *gin.Context) {
 		err := tollbooth.LimitByRequest(lmt, c.Writer, c.Request)
 		if err != nil {

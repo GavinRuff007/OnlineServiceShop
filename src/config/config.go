@@ -21,10 +21,11 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	InternalPort string
-	ExternalPort string
-	RunMode      string
-	Domain       string
+	InternalPort   string
+	ExternalPort   string
+	RunMode        string
+	Domain         string
+	RateLimitCount float64
 }
 
 type LoggerConfig struct {

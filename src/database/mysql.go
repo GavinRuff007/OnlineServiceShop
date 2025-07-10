@@ -14,16 +14,23 @@ var dbClient *gorm.DB
 
 func InitDb(cfg *config.Config) error {
 	var err error
-	cnn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Tehran",
-		cfg.Mysql.DB_HOST, cfg.Mysql.DB_PORT, cfg.Mysql.DB_USER, cfg.Mysql.DB_PASSWORD,
-		cfg.Mysql.DB_NAME, cfg.Mysql.SSLMode)
+	cnn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		cfg.Mysql.DB_USER, cfg.Mysql.DB_PASSWORD,
+		cfg.Mysql.DB_HOST, cfg.Mysql.DB_PORT,
+		cfg.Mysql.DB_NAME,
+	)
 
-	dbClient, err = gorm.Open(mysql.Open(cnn), &gorm.Config{})
+	dbClient, err = gorm.Open(mysql.Open(cnn), &gorm.Config{}) // ← اصلاح‌شده
+	if err != nil {
+		println(err.Error())
+		return err
+	}
+
+	sqlDb, err := dbClient.DB()
 	if err != nil {
 		return err
 	}
 
-	sqlDb, _ := dbClient.DB()
 	err = sqlDb.Ping()
 	if err != nil {
 		return err

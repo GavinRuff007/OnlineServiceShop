@@ -14,8 +14,8 @@ import (
 	httpserver "RestGoTest/src"
 	"RestGoTest/src/cache"
 	"RestGoTest/src/config"
-	"RestGoTest/src/database"
-	"RestGoTest/src/httpPackage/repository"
+	db "RestGoTest/src/database"
+	"RestGoTest/src/database/migrations"
 	"RestGoTest/src/pkg/logging"
 	"fmt"
 	"time"
@@ -39,15 +39,19 @@ func main() {
 
 	/*Start Point of Service*/
 	/*═══════════════════════════════════════════════*/
-	database.InitDatabase()
-	defer repository.DB.Close()
 
 	err := cache.InitRedis(cfg)
-	defer cache.CloseRedis()
-
 	if err != nil {
 		logger.Fatal(logging.Redis, logging.Startup, err.Error(), nil)
 	}
+	defer cache.CloseRedis()
+
+	err = db.InitDb(cfg)
+	migrations.InitMigrations()
+	if err != nil {
+		logger.Fatal(logging.Mysql, logging.Startup, err.Error(), nil)
+	}
+	defer db.CloseDb()
 
 	a := &httpserver.App{Port: InternalPort}
 	a.Init(cfg)

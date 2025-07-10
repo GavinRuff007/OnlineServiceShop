@@ -1,40 +1,30 @@
 package util
 
 import (
-	"encoding/json"
-	"net/http"
+	"RestGoTest/src/config"
+	"log"
+	"math"
+	"math/rand"
+	"strconv"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
-type StandardResponse struct {
-	ResponseStatus  int         `json:"responseStatus"`
-	TimeDate        string      `json:"timedate"`
-	ResponseMessage string      `json:"responseMessage"`
-	ResponseData    interface{} `json:"responseData,omitempty"`
-}
-
-func ResponseWithJSON(w http.ResponseWriter, data interface{}, message string) {
-	res := StandardResponse{
-		ResponseStatus:  http.StatusOK,
-		TimeDate:        time.Now().Format("2006-01-02 15:04:05"),
-		ResponseMessage: message,
-		ResponseData:    data,
+func HashPassword(password string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("failed to hash password: %v", err)
 	}
-	responseWithJSON(w, http.StatusOK, res)
+	return string(hash)
 }
 
-func ResponseWithError(w http.ResponseWriter, status int, message string) {
-	res := StandardResponse{
-		ResponseStatus:  status,
-		TimeDate:        time.Now().Format("2006-01-02 15:04:05"),
-		ResponseMessage: message,
-		ResponseData:    nil,
-	}
-	responseWithJSON(w, status, res)
-}
+func GenerateOtp() string {
+	cfg := config.GetConfig()
+	rand.Seed(time.Now().UnixNano())
+	min := int(math.Pow(10, float64(cfg.Otp.Digits-1)))   // 10^d-1 100000
+	max := int(math.Pow(10, float64(cfg.Otp.Digits)) - 1) // 999999 = 1000000 - 1 (10^d) -1
 
-func responseWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(payload)
+	var num = rand.Intn(max-min) + min
+	return strconv.Itoa(num)
 }
