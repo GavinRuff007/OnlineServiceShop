@@ -1,4 +1,4 @@
-package service_errors
+package constant
 
 const (
 	// Token

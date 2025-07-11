@@ -4,7 +4,7 @@ import (
 	"RestGoTest/src/cache"
 	"RestGoTest/src/config"
 	"RestGoTest/src/constant"
-	"RestGoTest/src/dto/service_errors"
+	"RestGoTest/src/helper/service_errors"
 	"RestGoTest/src/pkg/logging"
 	"RestGoTest/src/util"
 	"fmt"
@@ -48,9 +48,9 @@ func (u *OtpUsecase) SetOtp(mobileNumber string, otp string) error {
 
 	res, err := cache.Get[otpDto](u.redisClient, key)
 	if err == nil && !res.Used {
-		return &service_errors.ServiceError{EndUserMessage: service_errors.OptExists}
+		return &service_errors.ServiceError{EndUserMessage: constant.OptExists}
 	} else if err == nil && res.Used {
-		return &service_errors.ServiceError{EndUserMessage: service_errors.OtpUsed}
+		return &service_errors.ServiceError{EndUserMessage: constant.OtpUsed}
 	}
 	err = cache.Set(u.redisClient, key, val, u.cfg.Otp.ExpireTime*time.Second)
 	if err != nil {
@@ -65,9 +65,9 @@ func (u *OtpUsecase) ValidateOtp(mobileNumber string, otp string) error {
 	if err != nil {
 		return err
 	} else if res.Used {
-		return &service_errors.ServiceError{EndUserMessage: service_errors.OtpUsed}
+		return &service_errors.ServiceError{EndUserMessage: constant.OtpUsed}
 	} else if !res.Used && res.Value != otp {
-		return &service_errors.ServiceError{EndUserMessage: service_errors.OtpNotValid}
+		return &service_errors.ServiceError{EndUserMessage: constant.OtpNotValid}
 	} else if !res.Used && res.Value == otp {
 		res.Used = true
 		err = cache.Set(u.redisClient, key, res, u.cfg.Otp.ExpireTime*time.Second)
