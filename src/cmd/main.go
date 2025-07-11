@@ -45,5 +45,5 @@ func main() {
 
 	httpserver.InitServer(cfg)
 	/*═══════════════════════════════════════════════*/
-	fmt.Println("Hello World!")
+
 }
