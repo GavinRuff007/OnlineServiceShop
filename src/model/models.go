@@ -10,7 +10,7 @@ import (
 type User struct {
 	BaseModel
 	Username     string `gorm:"type:string;size:20;not null;unique"`
-	FirstName    string `gorm:"type:string;size:15;null"`
+	FullName     string `gorm:"type:string;size:100;not null"`
 	LastName     string `gorm:"type:string;size:25;null"`
 	MobileNumber string `gorm:"type:string;size:11;null;unique;default:null"`
 	Email        string `gorm:"type:string;size:64;null;unique;default:null"`
@@ -27,15 +27,15 @@ type Role struct {
 
 type UserRole struct {
 	BaseModel
-	User   User `gorm:"foreignKey:UserId;constraint:OnUpdate:NO ACTION;OnDelete:NO ACTION"`
-	Role   Role `gorm:"foreignKey:RoleId;constraint:OnUpdate:NO ACTION;OnDelete:NO ACTION"`
+	User   User `gorm:"foreignKey:UserId;constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
+	Role   Role `gorm:"foreignKey:RoleId;constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
 	UserId int
 	RoleId int
 }
 
 // GiftcardProvider represents the giftcard_providers table
 type GiftcardProvider struct {
-	ID        uint    `gorm:"primaryKey"`
+	ID        int     `gorm:"primaryKey"`
 	Name      string  `gorm:"size:50;not null"`
 	LogoURL   *string `gorm:"type:text"`
 	IsActive  bool    `gorm:"default:true"`
@@ -44,8 +44,8 @@ type GiftcardProvider struct {
 
 // Giftcard represents the giftcards table
 type Giftcard struct {
-	ID          uint `gorm:"primaryKey"`
-	ProviderID  *uint
+	ID          int `gorm:"primaryKey"`
+	ProviderID  *int
 	Provider    *GiftcardProvider `gorm:"foreignKey:ProviderID"`
 	Region      string            `gorm:"size:20;not null"`
 	AmountUSD   float64           `gorm:"type:decimal(10,2);not null"`
@@ -59,10 +59,10 @@ type Giftcard struct {
 
 // Order represents the orders table
 type Order struct {
-	ID         uint `gorm:"primaryKey"`
-	UserID     uint
+	ID         int `gorm:"primaryKey"`
+	UserID     int
 	User       User
-	GiftcardID uint
+	GiftcardID int
 	Giftcard   Giftcard
 	Quantity   int
 	UnitPrice  float64 `gorm:"type:decimal(10,2)"`
@@ -74,8 +74,8 @@ type Order struct {
 
 // Payment represents the payments table
 type Payment struct {
-	ID        uint    `gorm:"primaryKey"`
-	OrderID   uint    `gorm:"uniqueIndex"`
+	ID        int     `gorm:"primaryKey"`
+	OrderID   int     `gorm:"uniqueIndex"`
 	Order     Order   `gorm:"foreignKey:OrderID;references:ID"`
 	Provider  string  `gorm:"size:50;not null"`
 	Status    string  `gorm:"type:enum('unpaid','paid','failed');default:'unpaid'"`
@@ -87,20 +87,20 @@ type Payment struct {
 
 // GiftcardCode represents the giftcard_codes table
 type GiftcardCode struct {
-	ID              uint `gorm:"primaryKey"`
-	GiftcardID      *uint
+	ID              int `gorm:"primaryKey"`
+	GiftcardID      *int
 	Giftcard        *Giftcard
 	CodeEncrypted   string `gorm:"type:text;not null"`
 	IsUsed          bool   `gorm:"default:false"`
 	UsedAt          *time.Time
-	AssignedOrderID *uint
+	AssignedOrderID *int
 	AssignedOrder   *Order `gorm:"foreignKey:AssignedOrderID"`
 	CreatedAt       time.Time
 }
 
 // DiscountCode represents the discount_codes table
 type DiscountCode struct {
-	ID            uint    `gorm:"primaryKey"`
+	ID            int     `gorm:"primaryKey"`
 	Code          string  `gorm:"size:20;unique;not null"`
 	Description   *string `gorm:"type:text"`
 	DiscountType  string  `gorm:"type:enum('fixed','percent');not null"`
@@ -113,18 +113,18 @@ type DiscountCode struct {
 
 // OrderDiscount represents the order_discounts table
 type OrderDiscount struct {
-	ID             uint `gorm:"primaryKey"`
-	OrderID        *uint
+	ID             int `gorm:"primaryKey"`
+	OrderID        *int
 	Order          *Order
-	DiscountCodeID *uint
+	DiscountCodeID *int
 	DiscountCode   *DiscountCode
 	AppliedValue   *float64 `gorm:"type:decimal(10,2)"`
 }
 
 // AuditLog represents the audit_logs table
 type AuditLog struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    *uint
+	ID        int `gorm:"primaryKey"`
+	UserID    *int
 	User      *User
 	Action    string `gorm:"size:100"`
 	Details   datatypes.JSON

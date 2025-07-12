@@ -3,37 +3,35 @@ package services
 import (
 	"RestGoTest/src/config"
 	"RestGoTest/src/constant"
-	db "RestGoTest/src/database"
+	"RestGoTest/src/domain/repository"
 	"RestGoTest/src/dto"
 	"RestGoTest/src/helper/service_errors"
 	"RestGoTest/src/model"
 	"RestGoTest/src/pkg/logging"
-	"RestGoTest/src/repository"
 	service "RestGoTest/src/services/dto"
 	"RestGoTest/src/util"
 	"context"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type UserService struct {
-	logger           logging.Logger
-	cfg              *config.Config
-	OtpService       *OtpUsecase
-	database         *gorm.DB
+	logger     logging.Logger
+	cfg        *config.Config
+	OtpService *OtpUsecase
+	//database         *gorm.DB
 	tokenUserService *TokenUsecase
 	repository       repository.UserRepository
 }
 
-func NewUserService(cfg *config.Config) *UserService {
-	database := db.GetDb()
+func NewUserService(cfg *config.Config, repository repository.UserRepository) *UserService {
 	logger := logging.NewLogger(cfg)
 	return &UserService{
-		cfg:        cfg,
-		database:   database,
-		logger:     logger,
-		OtpService: NewOtpUsecase(cfg),
+		cfg:              cfg,
+		repository:       repository,
+		logger:           logger,
+		OtpService:       NewOtpUsecase(cfg),
+		tokenUserService: NewTokenUsecase(cfg),
 	}
 }
 
@@ -44,7 +42,7 @@ func (u *UserService) LoginByUsername(ctx context.Context, username string, pass
 	if err != nil {
 		return nil, err
 	}
-	tokenDto := tokenDto{UserId: user.Id, FirstName: user.FirstName, LastName: user.LastName,
+	tokenDto := tokenDto{UserId: user.Id, FirstName: user.FullName, LastName: user.LastName,
 		Email: user.Email, MobileNumber: user.MobileNumber}
 
 	if len(*user.UserRoles) > 0 {
@@ -133,10 +131,10 @@ func (u *UserService) RegisterAndLoginByMobileNumber(ctx context.Context, mobile
 }
 
 func (u *UserService) generateToken(user model.User) (*dto.TokenDetail, error) {
-	tokenDto := tokenDto{UserId: user.Id, FirstName: user.FirstName, LastName: user.LastName,
+	tokenDto := tokenDto{UserId: user.Id, FirstName: user.FullName, LastName: user.LastName,
 		Email: user.Email, MobileNumber: user.MobileNumber}
 
-	if len(*user.UserRoles) > 0 {
+	if user.UserRoles != nil && len(*user.UserRoles) > 0 {
 		for _, ur := range *user.UserRoles {
 			tokenDto.Roles = append(tokenDto.Roles, ur.Role.Name)
 		}

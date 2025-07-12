@@ -19,9 +19,9 @@ type RegisterUserByUsername struct {
 
 func ToUserModel(from RegisterUserByUsername) model.User {
 	return model.User{Username: from.Username,
-		FirstName: from.FirstName,
-		LastName:  from.LastName,
-		Email:     from.Email,
+		FullName: from.FirstName,
+		LastName: from.LastName,
+		Email:    from.Email,
 	}
 }
 

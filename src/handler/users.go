@@ -3,6 +3,7 @@ package handler
 import (
 	"RestGoTest/src/config"
 	"RestGoTest/src/constant"
+	"RestGoTest/src/dependency"
 	"RestGoTest/src/dto"
 	"RestGoTest/src/helper"
 	"RestGoTest/src/services"
@@ -20,7 +21,7 @@ type UsersHandler struct {
 }
 
 func NewUserHandler(cfg *config.Config) *UsersHandler {
-	userUsecase := services.NewUserService(cfg)
+	userUsecase := services.NewUserService(cfg, dependency.GetUserRepository(cfg))
 	otpUsecase := services.NewOtpUsecase(cfg)
 	tokenUsecase := services.NewTokenUsecase(cfg)
 	return &UsersHandler{userUsecase: userUsecase, otpUsecase: otpUsecase, tokenUsecase: tokenUsecase, config: cfg}

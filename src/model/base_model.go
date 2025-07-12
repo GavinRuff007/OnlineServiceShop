@@ -8,7 +8,7 @@ import (
 )
 
 type BaseModel struct {
-	Id int `gorm:"primarykey"`
+	Id int `gorm:"primaryKey;autoIncrement"` // 🔧 اضافه شدن `autoIncrement` برای اطمینان
 
 	CreatedAt  time.Time    `gorm:"type:TIMESTAMP;not null"`
 	ModifiedAt sql.NullTime `gorm:"type:TIMESTAMP;null"`
