@@ -18,7 +18,7 @@ func main() {
 
 	fmt.Println("═══════════════════════════════════════════════")
 	fmt.Println("🧩      API Server      ")
-	fmt.Println("🚀   OnlineShop REST API   ")
+	fmt.Println("🚀   OnlineServiceShop REST API   ")
 	fmt.Println("═══════════════════════════════════════════════")
 
 	InternalPort := fmt.Sprintf(":%s", cfg.Server.InternalPort)
