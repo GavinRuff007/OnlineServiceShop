@@ -77,6 +77,8 @@ type OtpConfig struct {
 	ExpireTime time.Duration
 	Digits     int
 	Limiter    time.Duration
+	Burst      int
+	Ttl        time.Duration
 }
 
 type JWTConfig struct {

@@ -113,7 +113,7 @@ func (l *IPRateLimiter) evict() {
 // OtpLimiter middleware enforces per‑IP rate limits for OTP endpoints.
 // It uses a shared IPRateLimiter instance with automatic cleanup.
 func OtpLimiter(cfg *config.Config) gin.HandlerFunc {
-	limiter := NewIPRateLimiter(rate.Every(cfg.Otp.Limiter*time.Second), 1, 15*time.Minute) // keep idle IPs 15m
+	limiter := NewIPRateLimiter(rate.Every(cfg.Otp.Limiter*time.Second), cfg.Otp.Burst, cfg.Otp.Ttl*time.Minute) // keep idle IPs 15m
 
 	return func(c *gin.Context) {
 		ip := clientIP(c.Request.RemoteAddr)
