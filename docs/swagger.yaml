@@ -169,7 +169,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: ایجاد یک سفارش برای کاربر
+      description: Create New Order for Client
       parameters:
       - description: OrderCreateRequest
         in: body
@@ -194,14 +194,14 @@ paths:
             $ref: '#/definitions/helper.BaseHttpResponse'
       security:
       - BearerAuth: []
-      summary: ایجاد سفارش جدید
+      summary: Create New Order
       tags:
       - Orders
   /v1/orders/by-user:
     post:
       consumes:
       - application/json
-      description: دریافت لیست سفارشات یک کاربر
+      description: Get all Client Orders
       parameters:
       - description: OrdersByUserRequest
         in: body
@@ -222,14 +222,14 @@ paths:
             $ref: '#/definitions/helper.BaseHttpResponse'
       security:
       - BearerAuth: []
-      summary: دریافت همه سفارشات کاربر
+      summary: Get all Client Orders
       tags:
       - Orders
   /v1/orders/delete:
     delete:
       consumes:
       - application/json
-      description: حذف یک سفارش
+      description: Delete a order
       parameters:
       - description: DeleteOrderRequest
         in: body
@@ -254,14 +254,14 @@ paths:
             $ref: '#/definitions/helper.BaseHttpResponse'
       security:
       - BearerAuth: []
-      summary: حذف سفارش
+      summary: Delete order
       tags:
       - Orders
   /v1/orders/get:
     post:
       consumes:
       - application/json
-      description: دریافت اطلاعات یک سفارش با شناسه
+      description: Get Order with Id
       parameters:
       - description: OrderGetRequest
         in: body
@@ -286,14 +286,14 @@ paths:
             $ref: '#/definitions/helper.BaseHttpResponse'
       security:
       - BearerAuth: []
-      summary: دریافت سفارش
+      summary: Get Order
       tags:
       - Orders
   /v1/orders/update-status:
     put:
       consumes:
       - application/json
-      description: تغییر وضعیت سفارش (pending, paid, delivered, failed)
+      description: Update Order Base (pending, paid, delivered, failed)
       parameters:
       - description: UpdateOrderStatusRequest
         in: body
@@ -318,7 +318,7 @@ paths:
             $ref: '#/definitions/helper.BaseHttpResponse'
       security:
       - BearerAuth: []
-      summary: بروزرسانی وضعیت سفارش
+      summary: Update Order
       tags:
       - Orders
   /v1/users/login-by-mobile:

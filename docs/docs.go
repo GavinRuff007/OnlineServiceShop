@@ -22,7 +22,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "ایجاد یک سفارش برای کاربر",
+                "description": "Create New Order for Client",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "ایجاد سفارش جدید",
+                "summary": "Create New Order",
                 "parameters": [
                     {
                         "description": "OrderCreateRequest",
@@ -73,7 +73,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "دریافت لیست سفارشات یک کاربر",
+                "description": "Get all Client Orders",
                 "consumes": [
                     "application/json"
                 ],
@@ -83,7 +83,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "دریافت همه سفارشات کاربر",
+                "summary": "Get all Client Orders",
                 "parameters": [
                     {
                         "description": "OrdersByUserRequest",
@@ -118,7 +118,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "حذف یک سفارش",
+                "description": "Delete a order",
                 "consumes": [
                     "application/json"
                 ],
@@ -128,7 +128,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "حذف سفارش",
+                "summary": "Delete order",
                 "parameters": [
                     {
                         "description": "DeleteOrderRequest",
@@ -169,7 +169,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "دریافت اطلاعات یک سفارش با شناسه",
+                "description": "Get Order with Id",
                 "consumes": [
                     "application/json"
                 ],
@@ -179,7 +179,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "دریافت سفارش",
+                "summary": "Get Order",
                 "parameters": [
                     {
                         "description": "OrderGetRequest",
@@ -220,7 +220,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "تغییر وضعیت سفارش (pending, paid, delivered, failed)",
+                "description": "Update Order Base (pending, paid, delivered, failed)",
                 "consumes": [
                     "application/json"
                 ],
@@ -230,7 +230,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "بروزرسانی وضعیت سفارش",
+                "summary": "Update Order",
                 "parameters": [
                     {
                         "description": "UpdateOrderStatusRequest",

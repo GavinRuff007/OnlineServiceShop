@@ -11,7 +11,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "ایجاد یک سفارش برای کاربر",
+                "description": "Create New Order for Client",
                 "consumes": [
                     "application/json"
                 ],
@@ -21,7 +21,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "ایجاد سفارش جدید",
+                "summary": "Create New Order",
                 "parameters": [
                     {
                         "description": "OrderCreateRequest",
@@ -62,7 +62,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "دریافت لیست سفارشات یک کاربر",
+                "description": "Get all Client Orders",
                 "consumes": [
                     "application/json"
                 ],
@@ -72,7 +72,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "دریافت همه سفارشات کاربر",
+                "summary": "Get all Client Orders",
                 "parameters": [
                     {
                         "description": "OrdersByUserRequest",
@@ -107,7 +107,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "حذف یک سفارش",
+                "description": "Delete a order",
                 "consumes": [
                     "application/json"
                 ],
@@ -117,7 +117,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "حذف سفارش",
+                "summary": "Delete order",
                 "parameters": [
                     {
                         "description": "DeleteOrderRequest",
@@ -158,7 +158,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "دریافت اطلاعات یک سفارش با شناسه",
+                "description": "Get Order with Id",
                 "consumes": [
                     "application/json"
                 ],
@@ -168,7 +168,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "دریافت سفارش",
+                "summary": "Get Order",
                 "parameters": [
                     {
                         "description": "OrderGetRequest",
@@ -209,7 +209,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "تغییر وضعیت سفارش (pending, paid, delivered, failed)",
+                "description": "Update Order Base (pending, paid, delivered, failed)",
                 "consumes": [
                     "application/json"
                 ],
@@ -219,7 +219,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "بروزرسانی وضعیت سفارش",
+                "summary": "Update Order",
                 "parameters": [
                     {
                         "description": "UpdateOrderStatusRequest",

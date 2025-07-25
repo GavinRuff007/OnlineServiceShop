@@ -25,8 +25,8 @@ func NewOrdersHandler(cfg *config.Config) *OrdersHandler {
 
 // @Security BearerAuth
 // CreateOrder godoc
-// @Summary ایجاد سفارش جدید
-// @Description ایجاد یک سفارش برای کاربر
+// @Summary Create New Order
+// @Description Create New Order for Client
 // @Tags Orders
 // @Accept  json
 // @Produce  json
@@ -53,8 +53,8 @@ func (h *OrdersHandler) CreateOrder(c *gin.Context) {
 
 // @Security BearerAuth
 // GetOrderByID godoc
-// @Summary دریافت سفارش
-// @Description دریافت اطلاعات یک سفارش با شناسه
+// @Summary Get Order
+// @Description Get Order with Id
 // @Tags Orders
 // @Accept  json
 // @Produce  json
@@ -81,8 +81,8 @@ func (h *OrdersHandler) GetOrderByID(c *gin.Context) {
 
 // @Security BearerAuth
 // GetOrdersByUser godoc
-// @Summary دریافت همه سفارشات کاربر
-// @Description دریافت لیست سفارشات یک کاربر
+// @Summary Get all Client Orders
+// @Description Get all Client Orders
 // @Tags Orders
 // @Accept  json
 // @Produce  json
@@ -108,8 +108,8 @@ func (h *OrdersHandler) GetOrdersByUser(c *gin.Context) {
 
 // @Security BearerAuth
 // UpdateOrderStatus godoc
-// @Summary بروزرسانی وضعیت سفارش
-// @Description تغییر وضعیت سفارش (pending, paid, delivered, failed)
+// @Summary Update Order
+// @Description Update Order Base (pending, paid, delivered, failed)
 // @Tags Orders
 // @Accept  json
 // @Produce  json
@@ -135,8 +135,8 @@ func (h *OrdersHandler) UpdateOrderStatus(c *gin.Context) {
 
 // @Security BearerAuth
 // DeleteOrder godoc
-// @Summary حذف سفارش
-// @Description حذف یک سفارش
+// @Summary Delete order
+// @Description Delete a order
 // @Tags Orders
 // @Accept  json
 // @Produce  json
