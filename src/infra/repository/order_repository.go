@@ -3,13 +3,18 @@ package repository
 import (
 	"RestGoTest/src/config"
 	"RestGoTest/src/database"
+	"RestGoTest/src/dto"
 	"RestGoTest/src/model"
 	"RestGoTest/src/pkg/logging"
 	"context"
+	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
-const orderStatusFilterExp string = "status = ?"
 const orderIDFilterExp string = "id = ?"
+
+var validate = validator.New()
 
 type MysqlOrderRepository struct {
 	*BaseRepository[model.Order]
@@ -26,54 +31,141 @@ func NewOrderRepository(cfg *config.Config) *MysqlOrderRepository {
 }
 
 // ثبت سفارش جدید
-func (r *MysqlOrderRepository) CreateOrder(ctx context.Context, order model.Order) (model.Order, error) {
+func (r *MysqlOrderRepository) CreateOrder(ctx context.Context, orderDTO *dto.OrderCreateDTO) (dto.OrderResponseDTO, error) {
+	var orderModel model.Order
+	var result dto.OrderResponseDTO
+
+	// --- اعتبارسنجی ورودی ---
+	if err := validate.Struct(orderDTO); err != nil {
+		return result, err
+	}
+
+	// --- محاسبه TotalPrice ---
+	totalPrice := float64(orderDTO.Quantity) * orderDTO.UnitPrice
+
+	// --- پر کردن مدل ---
+	orderModel = model.Order{
+		UserID:     orderDTO.UserID,
+		GiftcardID: orderDTO.GiftcardID,
+		Quantity:   orderDTO.Quantity,
+		UnitPrice:  orderDTO.UnitPrice,
+		TotalPrice: totalPrice,
+		Status:     orderDTO.Status,
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
+	}
+
+	// پیش‌فرض pending
+	if orderModel.Status == "" {
+		orderModel.Status = "pending"
+	}
+
 	tx := r.database.WithContext(ctx).Begin()
-	err := tx.Create(&order).Error
-	if err != nil {
+	if tx.Error != nil {
+		return result, tx.Error
+	}
+
+	if err := tx.Create(&orderModel).Error; err != nil {
 		tx.Rollback()
 		r.logger.Error(logging.Mysql, logging.Rollback, err.Error(), nil)
-		return order, err
+		return result, err
 	}
-	tx.Commit()
-	return order, nil
+	if err := tx.Commit().Error; err != nil {
+		return result, err
+	}
+
+	// مپ به DTO برای خروجی
+	result = dto.OrderResponseDTO{
+		ID:         orderModel.ID,
+		UserID:     orderModel.UserID,
+		GiftcardID: orderModel.GiftcardID,
+		Quantity:   orderModel.Quantity,
+		UnitPrice:  orderModel.UnitPrice,
+		TotalPrice: orderModel.TotalPrice,
+		Status:     orderModel.Status,
+		CreatedAt:  orderModel.CreatedAt,
+		UpdatedAt:  orderModel.UpdatedAt,
+	}
+	return result, nil
 }
 
 // دریافت سفارش با شناسه
-func (r *MysqlOrderRepository) GetOrderByID(ctx context.Context, orderID int) (model.Order, error) {
+func (r *MysqlOrderRepository) GetOrderByID(ctx context.Context, req dto.OrderGetByIDDTO) (dto.OrderResponseDTO, error) {
 	var order model.Order
+	var result dto.OrderResponseDTO
+
+	if err := validate.Struct(req); err != nil {
+		return result, err
+	}
+
 	err := r.database.WithContext(ctx).
-		Model(&model.Order{}).
-		Where(orderIDFilterExp, orderID).
+		Where(orderIDFilterExp, req.OrderID).
 		Preload("User").
 		Preload("Giftcard").
 		First(&order).Error
 	if err != nil {
-		return order, err
+		return result, err
 	}
-	return order, nil
+
+	result = dto.OrderResponseDTO{
+		ID:         order.ID,
+		UserID:     order.UserID,
+		GiftcardID: order.GiftcardID,
+		Quantity:   order.Quantity,
+		UnitPrice:  order.UnitPrice,
+		TotalPrice: order.TotalPrice,
+		Status:     order.Status,
+		CreatedAt:  order.CreatedAt,
+		UpdatedAt:  order.UpdatedAt,
+	}
+	return result, nil
 }
 
 // دریافت همه سفارشات یک کاربر
-func (r *MysqlOrderRepository) GetOrdersByUserID(ctx context.Context, userID int) ([]model.Order, error) {
+func (r *MysqlOrderRepository) GetOrdersByUserID(ctx context.Context, req dto.OrdersByUserDTO) ([]dto.OrderResponseDTO, error) {
+	if err := validate.Struct(req); err != nil {
+		return nil, err
+	}
+
 	var orders []model.Order
+	var result []dto.OrderResponseDTO
+
 	err := r.database.WithContext(ctx).
-		Model(&model.Order{}).
-		Where("user_id = ?", userID).
+		Where("user_id = ?", req.UserID).
 		Preload("Giftcard").
 		Find(&orders).Error
 	if err != nil {
 		return nil, err
 	}
-	return orders, nil
+
+	for _, o := range orders {
+		result = append(result, dto.OrderResponseDTO{
+			ID:         o.ID,
+			UserID:     o.UserID,
+			GiftcardID: o.GiftcardID,
+			Quantity:   o.Quantity,
+			UnitPrice:  o.UnitPrice,
+			TotalPrice: o.TotalPrice,
+			Status:     o.Status,
+			CreatedAt:  o.CreatedAt,
+			UpdatedAt:  o.UpdatedAt,
+		})
+	}
+
+	return result, nil
 }
 
-// چک کردن وجود سفارش بر اساس شناسه
-func (r *MysqlOrderRepository) ExistsOrder(ctx context.Context, orderID int) (bool, error) {
+// چک کردن وجود سفارش
+func (r *MysqlOrderRepository) ExistsOrder(ctx context.Context, req dto.OrderExistsDTO) (bool, error) {
+	if err := validate.Struct(req); err != nil {
+		return false, err
+	}
+
 	var exists bool
 	err := r.database.WithContext(ctx).
 		Model(&model.Order{}).
 		Select("count(*) > 0").
-		Where(orderIDFilterExp, orderID).
+		Where(orderIDFilterExp, req.OrderID).
 		Find(&exists).Error
 	if err != nil {
 		r.logger.Error(logging.Mysql, logging.Select, err.Error(), nil)
@@ -82,12 +174,16 @@ func (r *MysqlOrderRepository) ExistsOrder(ctx context.Context, orderID int) (bo
 	return exists, nil
 }
 
-// بروزرسانی وضعیت سفارش (مثلا از pending به paid)
-func (r *MysqlOrderRepository) UpdateOrderStatus(ctx context.Context, orderID int, status string) error {
+// بروزرسانی وضعیت سفارش
+func (r *MysqlOrderRepository) UpdateOrderStatus(ctx context.Context, req dto.OrderStatusUpdateDTO) error {
+	if err := validate.Struct(req); err != nil {
+		return err
+	}
+
 	err := r.database.WithContext(ctx).
 		Model(&model.Order{}).
-		Where(orderIDFilterExp, orderID).
-		Update("status", status).Error
+		Where(orderIDFilterExp, req.OrderID).
+		Update("status", req.Status).Error
 	if err != nil {
 		r.logger.Error(logging.Mysql, logging.Update, err.Error(), nil)
 		return err
@@ -96,9 +192,13 @@ func (r *MysqlOrderRepository) UpdateOrderStatus(ctx context.Context, orderID in
 }
 
 // حذف سفارش
-func (r *MysqlOrderRepository) DeleteOrder(ctx context.Context, orderID int) error {
+func (r *MysqlOrderRepository) DeleteOrder(ctx context.Context, req dto.OrderDeleteDTO) error {
+	if err := validate.Struct(req); err != nil {
+		return err
+	}
+
 	err := r.database.WithContext(ctx).
-		Where(orderIDFilterExp, orderID).
+		Where(orderIDFilterExp, req.OrderID).
 		Delete(&model.Order{}).Error
 	if err != nil {
 		r.logger.Error(logging.Mysql, logging.Delete, err.Error(), nil)

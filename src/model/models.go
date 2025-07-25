@@ -59,6 +59,7 @@ type Giftcard struct {
 
 // Order represents the orders table
 type Order struct {
+	BaseModel
 	ID         int `gorm:"primaryKey"`
 	UserID     int
 	User       User

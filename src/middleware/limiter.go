@@ -49,6 +49,11 @@ type IPRateLimiter struct {
 // NewIPRateLimiter creates a limiter that allows 'b' events every 'r' seconds per IP
 // and drops idle IPs after ttl.
 func NewIPRateLimiter(r rate.Limit, b int, ttl time.Duration) *IPRateLimiter {
+	// اگر ttl مقدار نداشت یا صفر بود، مقدار پیش‌فرض بده (مثلاً 1 دقیقه)
+	if ttl <= 0 {
+		ttl = time.Minute
+	}
+
 	l := &IPRateLimiter{
 		visitors:  make(map[string]*visitor),
 		r:         r,

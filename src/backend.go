@@ -42,15 +42,16 @@ func InitServer(cfg *config.Config) {
 }
 
 func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
-
 	v1 := r.Group("/v1")
 	{
-		// User
+		// Users Routes
 		users := v1.Group("/users")
 		router.User(users, cfg)
 
+		// Orders Routes
+		orders := v1.Group("/orders")
+		router.Order(orders, cfg)
 	}
-
 }
 
 func RegisterSwagger(r *gin.Engine, cfg *config.Config) {

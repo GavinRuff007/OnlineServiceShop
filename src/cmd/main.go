@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 
 	cfg := config.GetConfig()

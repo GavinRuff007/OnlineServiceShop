@@ -20,6 +20,65 @@ definitions:
     - password
     - username
     type: object
+  dto.OrderCreateDTO:
+    properties:
+      giftcard_id:
+        type: integer
+      quantity:
+        type: integer
+      status:
+        enum:
+        - pending
+        - paid
+        - failed
+        - delivered
+        type: string
+      unit_price:
+        type: number
+      user_id:
+        type: integer
+    required:
+    - giftcard_id
+    - quantity
+    - unit_price
+    - user_id
+    type: object
+  dto.OrderDeleteDTO:
+    properties:
+      order_id:
+        type: integer
+    required:
+    - order_id
+    type: object
+  dto.OrderGetByIDDTO:
+    properties:
+      order_id:
+        type: integer
+    required:
+    - order_id
+    type: object
+  dto.OrderStatusUpdateDTO:
+    properties:
+      order_id:
+        type: integer
+      status:
+        enum:
+        - pending
+        - paid
+        - failed
+        - delivered
+        type: string
+    required:
+    - order_id
+    - status
+    type: object
+  dto.OrdersByUserDTO:
+    properties:
+      user_id:
+        type: integer
+    required:
+    - user_id
+    type: object
   dto.RegisterLoginByMobileRequest:
     properties:
       mobileNumber:
@@ -106,6 +165,162 @@ definitions:
 info:
   contact: {}
 paths:
+  /v1/orders:
+    post:
+      consumes:
+      - application/json
+      description: ایجاد یک سفارش برای کاربر
+      parameters:
+      - description: OrderCreateRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderCreateDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "500":
+          description: Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      security:
+      - BearerAuth: []
+      summary: ایجاد سفارش جدید
+      tags:
+      - Orders
+  /v1/orders/by-user:
+    post:
+      consumes:
+      - application/json
+      description: دریافت لیست سفارشات یک کاربر
+      parameters:
+      - description: OrdersByUserRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdersByUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      security:
+      - BearerAuth: []
+      summary: دریافت همه سفارشات کاربر
+      tags:
+      - Orders
+  /v1/orders/delete:
+    delete:
+      consumes:
+      - application/json
+      description: حذف یک سفارش
+      parameters:
+      - description: DeleteOrderRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderDeleteDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "500":
+          description: Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      security:
+      - BearerAuth: []
+      summary: حذف سفارش
+      tags:
+      - Orders
+  /v1/orders/get:
+    post:
+      consumes:
+      - application/json
+      description: دریافت اطلاعات یک سفارش با شناسه
+      parameters:
+      - description: OrderGetRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderGetByIDDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      security:
+      - BearerAuth: []
+      summary: دریافت سفارش
+      tags:
+      - Orders
+  /v1/orders/update-status:
+    put:
+      consumes:
+      - application/json
+      description: تغییر وضعیت سفارش (pending, paid, delivered, failed)
+      parameters:
+      - description: UpdateOrderStatusRequest
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderStatusUpdateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "400":
+          description: Validation Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+        "500":
+          description: Failed
+          schema:
+            $ref: '#/definitions/helper.BaseHttpResponse'
+      security:
+      - BearerAuth: []
+      summary: بروزرسانی وضعیت سفارش
+      tags:
+      - Orders
   /v1/users/login-by-mobile:
     post:
       consumes:
@@ -249,4 +464,9 @@ paths:
       summary: Send otp to user
       tags:
       - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

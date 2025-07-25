@@ -9,3 +9,7 @@ import (
 func GetUserRepository(cfg *config.Config) contractRepository.UserRepository {
 	return infraRepository.NewUserRepository(cfg)
 }
+
+func GetOrderRepository(cfg *config.Config) contractRepository.OrderRepository {
+	return infraRepository.NewOrderRepository(cfg)
+}
