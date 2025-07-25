@@ -4,6 +4,7 @@ import (
 	"RestGoTest/docs"
 	"RestGoTest/src/config"
 	"RestGoTest/src/pkg/logging"
+	"RestGoTest/src/pkg/metrics"
 	"RestGoTest/src/router"
 	"RestGoTest/src/validations"
 	"fmt"
@@ -15,6 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -26,9 +29,11 @@ func InitServer(cfg *config.Config) {
 	gin.SetMode(cfg.Server.RunMode)
 	r := gin.New()
 	RegisterValidators()
+	RegisterPrometheus()
 
 	r.Use(middleware.DefaultStructuredLogger(cfg))
 	r.Use(middleware.Cors(cfg))
+	r.Use(middleware.Prometheus())
 	r.Use(gin.Logger(), middleware.LimitByRequest())
 
 	RegisterRoutes(r, cfg)
@@ -51,6 +56,8 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 		// Orders Routes
 		orders := v1.Group("/orders")
 		router.Order(orders, cfg)
+
+		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	}
 }
 
@@ -77,4 +84,18 @@ func RegisterValidators() {
 			logger.Error(logging.Validation, logging.Startup, err.Error(), nil)
 		}
 	}
+}
+func RegisterPrometheus() {
+	err := prometheus.Register(metrics.DbCall)
+	if err != nil {
+		logger.Error(logging.Prometheus, logging.Startup, err.Error(), nil)
+	}
+
+	err = prometheus.Register(metrics.HttpDuration)
+	if err != nil {
+		logger.Error(logging.Prometheus, logging.Startup, err.Error(), nil)
+	}
+
+	metrics.DbCall.WithLabelValues("model.User", "Init", "Success").Add(0)
+	metrics.DbCall.WithLabelValues("model.Order", "Init", "Success").Add(0)
 }
