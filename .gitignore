@@ -9,3 +9,5 @@
 /src/logs/
 
 /logs/*.log
+
+/log/*.log.gz

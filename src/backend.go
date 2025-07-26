@@ -34,7 +34,7 @@ func InitServer(cfg *config.Config) {
 	r.Use(middleware.DefaultStructuredLogger(cfg))
 	r.Use(middleware.Cors(cfg))
 	r.Use(middleware.Prometheus())
-	r.Use(gin.Logger(), middleware.LimitByRequest())
+	r.Use(gin.Logger(), SkipRateLimitForMetrics(middleware.LimitByRequest()))
 
 	RegisterRoutes(r, cfg)
 	RegisterSwagger(r, cfg)
@@ -98,4 +98,14 @@ func RegisterPrometheus() {
 
 	metrics.DbCall.WithLabelValues("model.User", "Init", "Success").Add(0)
 	metrics.DbCall.WithLabelValues("model.Order", "Init", "Success").Add(0)
+}
+
+func SkipRateLimitForMetrics(limitMiddleware gin.HandlerFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.Request.URL.Path == "/metrics" {
+			c.Next()
+			return
+		}
+		limitMiddleware(c)
+	}
 }
